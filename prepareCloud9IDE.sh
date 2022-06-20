@@ -113,3 +113,6 @@ curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64b
 sudo yum install -y session-manager-plugin.rpm
 
 session-manager-plugin
+
+# 最后再执行一次 source（确保 kubectl 别名 k 生效）
+source ~/.bashrc
