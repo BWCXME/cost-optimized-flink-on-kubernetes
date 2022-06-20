@@ -104,3 +104,12 @@ EOF
 source ~/.bashrc
 
 sudo python3 -m pip install awscurl
+
+
+# 安装 session-manager 插件
+echo "install session-manager"
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
+
+sudo yum install -y session-manager-plugin.rpm
+
+session-manager-plugin
