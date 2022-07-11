@@ -5,7 +5,9 @@ if [ $# -eq 0 ]
 fi
 
 # 配置环境变量，方便后续操作
-echo "config envs"
+echo "==============================================="
+echo "  Config envs ......"
+echo "==============================================="
 export AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
 #export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
 export ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
@@ -38,7 +40,9 @@ echo "export EKS_KEY_ARN=\"$CF_OUT_EKSKeyArn\"" >> ~/.bashrc
 source ~/.bashrc
 
 # eksctl
-echo "Install eksctl"
+echo "==============================================="
+echo "  Install eksctl ......"
+echo "==============================================="
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
 sudo mv /tmp/eksctl /usr/local/bin
 eksctl version
@@ -51,12 +55,16 @@ source ~/.bashrc
 
 
 # 辅助工具
-echo "Install jq, envsubst (from GNU gettext utilities) and bash-completion"
+echo "==============================================="
+echo "  Install jq, envsubst (from GNU gettext utilities) and bash-completion ......"
+echo "==============================================="
 sudo yum -y install jq gettext bash-completion moreutils
 
 
 # 更新 awscli 并配置自动完成
-echo "Upgrade awscli to v2"
+echo "==============================================="
+echo "  Upgrade awscli to v2 ......"
+echo "==============================================="
 mv /bin/aws /bin/aws1
 mv ~/anaconda3/bin/aws ~/anaconda3/bin/aws1
 ls -l /usr/local/bin/aws
@@ -73,7 +81,9 @@ aws --version
 
 
 # 安装 kubectl 并配置自动完成
-echo "Install kubectl"
+echo "==============================================="
+echo "  Install kubectl ......"
+echo "==============================================="
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 cat >> ~/.bashrc <<EOF
@@ -96,7 +106,9 @@ source ~/.bashrc
 
 
 # 安装 helm
-echo "Install helm"
+echo "==============================================="
+echo "  Install helm ......"
+echo "==============================================="
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 chmod 700 get_helm.sh
 ./get_helm.sh
@@ -106,7 +118,9 @@ helm repo add stable https://charts.helm.sh/stable
 
 
 # 安装 awscurl 工具 https://github.com/okigan/awscurl
-echo "Install awscurl"
+echo "==============================================="
+echo "  Install awscurl ......"
+echo "==============================================="
 cat >> ~/.bashrc <<EOF
 export PATH=\$PATH:\$HOME/.local/bin:\$HOME/bin:/usr/local/bin
 EOF
@@ -116,7 +130,9 @@ sudo python3 -m pip install awscurl
 
 
 # 安装 session-manager 插件
-echo "Install session-manager"
+echo "==============================================="
+echo "  Install session-manager ......"
+echo "==============================================="
 curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm" -o "session-manager-plugin.rpm"
 
 sudo yum install -y session-manager-plugin.rpm
@@ -125,18 +141,24 @@ session-manager-plugin
 
 
 # More tools
-echo "Install yq for yaml processing"
+echo "==============================================="
+echo "  Install yq for yaml processing ......"
+echo "==============================================="
 echo 'yq() {
   docker run --rm -i -v "${PWD}":/workdir mikefarah/yq "$@"
 }' | tee -a ~/.bashrc && source ~/.bashrc
 
 
-echo "Install c9 to open files in cloud9"
+echo "==============================================="
+echo "  Install c9 to open files in cloud9 ......"
+echo "==============================================="
 npm install -g c9
 # example  c9 open ~/package.json
 
 
-echo "Install k9s a Kubernetes CLI To Manage Your Clusters In Style"
+echo "==============================================="
+echo "  Install k9s a Kubernetes CLI To Manage Your Clusters In Style ......"
+echo "==============================================="
 curl -sS https://webinstall.dev/k9s | bash
 # 参考 https://segmentfault.com/a/1190000039755239
 
