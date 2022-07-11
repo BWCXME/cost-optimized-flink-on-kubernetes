@@ -104,6 +104,24 @@ echo "alias kgnk='kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.
 source ~/.bashrc
 
 
+echo "==============================================="
+echo "  Install krew ......"
+echo "==============================================="
+(
+  set -x; cd "$(mktemp -d)" &&
+  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+  KREW="krew-${OS}_${ARCH}" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+  tar zxvf "${KREW}.tar.gz" &&
+  ./"${KREW}" install krew
+)
+
+cat >> ~/.bashrc <<EOF
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+EOF
+source ~/.bashrc
+
 
 # 安装 helm
 echo "==============================================="
@@ -162,6 +180,12 @@ echo "==============================================="
 curl -sS https://webinstall.dev/k9s | bash
 # 参考 https://segmentfault.com/a/1190000039755239
 
+
+echo "==============================================="
+echo "  Install kubectx + kubens ......"
+echo "==============================================="
+kubectl krew install ctx
+kubectl krew install ns
 
 
 # 最后再执行一次 source
