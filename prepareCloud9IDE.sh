@@ -188,6 +188,14 @@ kubectl krew install ctx
 kubectl krew install ns
 
 
+echo "==============================================="
+echo "  Install kube-no-trouble (kubent) ......"
+echo "==============================================="
+# https://github.com/doitintl/kube-no-trouble
+# https://medium.doit-intl.com/kubernetes-how-to-automatically-detect-and-deal-with-deprecated-apis-f9a8fc23444c
+sh -c "$(curl -sSL https://git.io/install-kubent)"
+
+
 # 最后再执行一次 source
 echo "source .bashrc"
 shopt -s expand_aliases
