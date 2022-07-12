@@ -58,7 +58,8 @@ source ~/.bashrc
 echo "==============================================="
 echo "  Install jq, envsubst (from GNU gettext utilities) and bash-completion ......"
 echo "==============================================="
-sudo yum -y install jq gettext bash-completion moreutils
+# SM 默认没有 moreutils 安装包
+sudo yum -y install jq gettext bash-completion 
 
 
 # 更新 awscli 并配置自动完成
