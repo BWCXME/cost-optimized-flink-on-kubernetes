@@ -91,6 +91,7 @@ sudo curl https://raw.githubusercontent.com/blendle/kns/master/bin/ktx -o /usr/l
 #echo "alias kgn='kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.com/capacityType -L beta.kubernetes.io/instance-type -L eks.amazonaws.com/nodegroup -L topology.kubernetes.io/zone'" | tee -a ~/.bashrc
 echo "alias kgn='kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.com/capacityType -L node.kubernetes.io/instance-type -L eks.amazonaws.com/nodegroup -L topology.kubernetes.io/zone'" | tee -a ~/.bashrc
 echo "alias kgnk='kubectl get nodes -L beta.kubernetes.io/arch -L eks.amazonaws.com/capacityType -L node.kubernetes.io/instance-type -L eks.amazonaws.com/nodegroup -L topology.kubernetes.io/zone -L karpenter.sh/provisioner-name -L karpenter.sh/capacity-type'" | tee -a ~/.bashrc
+echo "alias kgp='kubectl get po -o wide'" | tee -a ~/.bashrc
 source ~/.bashrc
 
 
@@ -189,13 +190,15 @@ sh -c "$(curl -sSL https://git.io/install-kubent)"
 echo "==============================================="
 echo "  Install IAM Authenticator ......"
 echo "==============================================="
+# https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
 # curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
-# curl -o aws-iam-authenticator https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
-curl -o aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.9/aws-iam-authenticator_0.5.9_linux_amd64
+# curl -o aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.9/aws-iam-authenticator_0.5.9_linux_amd64
+curl -o aws-iam-authenticator https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
 chmod +x ./aws-iam-authenticator
-mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
+mkdir -p $HOME/bin && mv ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
 echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
 source ~/.bashrc
+aws-iam-authenticator help
 
 
 echo "==============================================="
@@ -208,25 +211,6 @@ export PATH="/opt/apache-maven-3.8.6/bin:$PATH"
 EOF
 source ~/.bashrc
 mvn --version
-
-
-echo "==============================================="
-echo "  Config Go ......"
-echo "==============================================="
-go version
-export GOPATH=$(go env GOPATH)
-echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
-source ~/.bashrc
-
-
-echo "==============================================="
-echo "  Install ccat ......"
-echo "==============================================="
-go install github.com/owenthereal/ccat@latest
-cat >> ~/.bashrc <<EOF
-alias cat=ccat
-EOF
-source ~/.bashrc
 
 
 echo "==============================================="
@@ -284,6 +268,24 @@ alias c=clear
 EOF
 source ~/.bashrc
 
+echo "==============================================="
+echo "  Config Go ......"
+echo "==============================================="
+go version
+export GOPATH=$(go env GOPATH)
+echo 'export GOPATH='${GOPATH} >> ~/.bashrc
+echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
+source ~/.bashrc
+
+
+echo "==============================================="
+echo "  Install ccat ......"
+echo "==============================================="
+go install github.com/owenthereal/ccat@latest
+cat >> ~/.bashrc <<EOF
+alias cat=ccat
+EOF
+source ~/.bashrc
 
 # 最后再执行一次 source
 echo "source .bashrc"
