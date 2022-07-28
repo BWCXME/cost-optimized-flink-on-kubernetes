@@ -27,12 +27,16 @@ export $(aws cloudformation describe-stacks --stack-name $1 --output text --quer
 echo "export EKS_VPC_ID=\"$CF_OUT_VpcId\"" >> ~/.bashrc
 echo "export EKS_CONTROLPLANE_SG=\"$CF_OUT_ControlPlaneSecurityGroup\"" >> ~/.bashrc
 echo "export EKS_SHAREDNODE_SG=\"$CF_OUT_SharedNodeSecurityGroup\"" >> ~/.bashrc
+echo "export EKS_CUSTOMNETWORK_SG=\"$CF_OUT_CustomNetworkSecurityGroup\"" >> ~/.bashrc
 echo "export EKS_PUB_SUBNET_01=\"$CF_OUT_PublicSubnet1\"" >> ~/.bashrc
 echo "export EKS_PUB_SUBNET_02=\"$CF_OUT_PublicSubnet2\"" >> ~/.bashrc
 echo "export EKS_PUB_SUBNET_03=\"$CF_OUT_PublicSubnet3\"" >> ~/.bashrc
 echo "export EKS_PRI_SUBNET_01=\"$CF_OUT_PrivateSubnet1\"" >> ~/.bashrc
 echo "export EKS_PRI_SUBNET_02=\"$CF_OUT_PrivateSubnet2\"" >> ~/.bashrc
 echo "export EKS_PRI_SUBNET_03=\"$CF_OUT_PrivateSubnet3\"" >> ~/.bashrc
+echo "export EKS_POD_SUBNET_01=\"$CF_OUT_PodSubnet1\"" >> ~/.bashrc
+echo "export EKS_POD_SUBNET_02=\"$CF_OUT_PodSubnet2\"" >> ~/.bashrc
+echo "export EKS_POD_SUBNET_03=\"$CF_OUT_PodSubnet3\"" >> ~/.bashrc
 echo "export EKS_KEY_ARN=\"$CF_OUT_EKSKeyArn\"" >> ~/.bashrc
 
 source ~/.bashrc
