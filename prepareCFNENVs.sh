@@ -28,6 +28,7 @@ echo "export EKS_VPC_ID=\"$CF_OUT_VpcId\"" >> ~/.bashrc
 echo "export EKS_CONTROLPLANE_SG=\"$CF_OUT_ControlPlaneSecurityGroup\"" >> ~/.bashrc
 echo "export EKS_SHAREDNODE_SG=\"$CF_OUT_SharedNodeSecurityGroup\"" >> ~/.bashrc
 echo "export EKS_CUSTOMNETWORK_SG=\"$CF_OUT_CustomNetworkSecurityGroup\"" >> ~/.bashrc
+echo "export EKS_EXTERNAL_SG=\"$CF_OUT_ExternalSecurityGroup\"" >> ~/.bashrc
 echo "export EKS_PUB_SUBNET_01=\"$CF_OUT_PublicSubnet1\"" >> ~/.bashrc
 echo "export EKS_PUB_SUBNET_02=\"$CF_OUT_PublicSubnet2\"" >> ~/.bashrc
 echo "export EKS_PUB_SUBNET_03=\"$CF_OUT_PublicSubnet3\"" >> ~/.bashrc
