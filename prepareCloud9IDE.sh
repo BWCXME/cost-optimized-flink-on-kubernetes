@@ -191,15 +191,15 @@ sh -c "$(curl -sSL https://git.io/install-kubent)"
 echo "==============================================="
 echo "  Install IAM Authenticator ......"
 echo "==============================================="
-# https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
-# curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
-# curl -o aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.9/aws-iam-authenticator_0.5.9_linux_amd64
-curl -o aws-iam-authenticator https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
-chmod +x ./aws-iam-authenticator
-mkdir -p $HOME/bin && mv ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
-echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
-source ~/.bashrc
-aws-iam-authenticator help
+## https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
+## curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
+## curl -o aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.9/aws-iam-authenticator_0.5.9_linux_amd64
+# curl -o aws-iam-authenticator https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
+# chmod +x ./aws-iam-authenticator
+# mkdir -p $HOME/bin && mv ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
+# echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+# source ~/.bashrc
+# aws-iam-authenticator help
 
 
 echo "==============================================="
