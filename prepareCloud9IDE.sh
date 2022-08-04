@@ -293,6 +293,18 @@ echo "  Install telnet ......"
 echo "==============================================="
 sudo yum -y install telnet
 
+
+echo "==============================================="
+echo "  Cofing dfimage ......"
+echo "==============================================="
+cat >> ~/.bashrc <<EOF
+alias dfimage="docker run -v /var/run/docker.sock:/var/run/docker.sock --rm alpine/dfimage"  
+EOF
+source ~/.bashrc
+
+# dfimage -sV=1.36 nginx:latest 
+
+
 # 最后再执行一次 source
 echo "source .bashrc"
 shopt -s expand_aliases
