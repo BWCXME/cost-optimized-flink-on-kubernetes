@@ -301,9 +301,20 @@ cat >> ~/.bashrc <<EOF
 alias dfimage="docker run -v /var/run/docker.sock:/var/run/docker.sock --rm alpine/dfimage"  
 EOF
 source ~/.bashrc
-
 # dfimage -sV=1.36 nginx:latest 
 
+
+echo "==============================================="
+echo "  Install ParallelCluster ......"
+echo "==============================================="
+if ! command -v pcluster &> /dev/null
+then
+  echo ">> pcluster is missing, reinstalling it"
+  sudo pip3 install 'aws-parallelcluster'
+else
+  echo ">> Pcluster $(pcluster version) found, nothing to install"
+fi
+pcluster version
 
 # 最后再执行一次 source
 echo "source .bashrc"
