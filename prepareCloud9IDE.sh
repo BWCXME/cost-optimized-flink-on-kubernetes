@@ -20,7 +20,7 @@ aws configure set region $AWS_REGION
 source ~/.bashrc
 aws sts get-caller-identity
 
-# eksctl
+
 echo "==============================================="
 echo "  Install eksctl ......"
 echo "==============================================="
@@ -36,10 +36,22 @@ EOF
 source ~/.bashrc
 
 
+echo "==============================================="
+echo "  Install eks anywhere ......"
+echo "==============================================="
+export EKSA_RELEASE="0.10.1" OS="$(uname -s | tr A-Z a-z)" RELEASE_NUMBER=15
+curl "https://anywhere-assets.eks.amazonaws.com/releases/eks-a/${RELEASE_NUMBER}/artifacts/eks-a/v${EKSA_RELEASE}/${OS}/amd64/eksctl-anywhere-v${EKSA_RELEASE}-${OS}-amd64.tar.gz" \
+    --silent --location \
+    | tar xz ./eksctl-anywhere
+sudo mv ./eksctl-anywhere /usr/local/bin/
+eksctl anywhere version
+
+
 # 辅助工具
 echo "==============================================="
 echo "  Install jq, envsubst (from GNU gettext utilities) and bash-completion ......"
 echo "==============================================="
+# moreutils: The command sponge allows us to read and write to the same file (cat a.txt|sponge a.txt)
 sudo yum -y install jq gettext bash-completion moreutils
 
 
@@ -315,6 +327,16 @@ else
   echo ">> Pcluster $(pcluster version) found, nothing to install"
 fi
 pcluster version
+
+echo "==============================================="
+echo "  Install wildq ......"
+echo "==============================================="
+# wildq: Tool on-top of jq to manipulate INI files
+sudo pip3 install wildq
+# cat file.ini \
+#   |wildq -i ini -M '.Key = "value"' \
+#   |sponge file.ini
+
 
 # 最后再执行一次 source
 echo "source .bashrc"
