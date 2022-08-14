@@ -338,6 +338,22 @@ sudo pip3 install wildq
 #   |sponge file.ini
 
 
+echo "==============================================="
+echo "  Install docker buildx ......"
+echo "==============================================="
+# https://aws.amazon.com/blogs/compute/how-to-quickly-setup-an-experimental-environment-to-run-containers-on-x86-and-aws-graviton2-based-amazon-ec2-instances-effort-to-port-a-container-based-application-from-x86-to-graviton2/
+# https://docs.docker.com/build/buildx/install/
+# export DOCKER_BUILDKIT=1
+# docker build --platform=local -o . git://github.com/docker/buildx
+DOCKER_BUILDKIT=1 docker build --platform=local -o . "https://github.com/docker/buildx.git"
+mkdir -p ~/.docker/cli-plugins
+mv buildx ~/.docker/cli-plugins/docker-buildx
+chmod a+x ~/.docker/cli-plugins/docker-buildx
+docker run --privileged --rm tonistiigi/binfmt --install all
+docker buildx ls
+
+
+
 # 最后再执行一次 source
 echo "source .bashrc"
 shopt -s expand_aliases
