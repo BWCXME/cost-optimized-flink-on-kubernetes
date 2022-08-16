@@ -339,6 +339,14 @@ sudo pip3 install wildq
 
 
 echo "==============================================="
+echo "  Expand disk space ......"
+echo "==============================================="
+wget https://raw.githubusercontent.com/BWCXME/cost-optimized-flink-on-kubernetes/main/resize-ebs.sh
+chmod +x resize-ebs.sh
+./resize-ebs.sh 1000
+
+
+echo "==============================================="
 echo "  Install docker buildx ......"
 echo "==============================================="
 # https://aws.amazon.com/blogs/compute/how-to-quickly-setup-an-experimental-environment-to-run-containers-on-x86-and-aws-graviton2-based-amazon-ec2-instances-effort-to-port-a-container-based-application-from-x86-to-graviton2/
