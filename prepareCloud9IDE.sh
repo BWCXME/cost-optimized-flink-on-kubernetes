@@ -356,6 +356,11 @@ sudo tar xvf AWSApp2Container-installer-linux.tar.gz
 # sudo ./install.sh
 echo y |sudo ./install.sh
 sudo app2container --version
+cat >> ~/.bashrc <<EOF
+alias a2c="sudo app2container"
+EOF
+source ~/.bashrc
+
 
 echo "==============================================="
 echo "  Expand disk space ......"
