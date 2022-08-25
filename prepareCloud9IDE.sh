@@ -59,9 +59,10 @@ sudo yum -y install jq gettext bash-completion moreutils
 echo "==============================================="
 echo "  Upgrade awscli to v2 ......"
 echo "==============================================="
-mv /bin/aws /bin/aws1
-mv ~/anaconda3/bin/aws ~/anaconda3/bin/aws1
+sudo mv /bin/aws /bin/aws1
+sudo mv ~/anaconda3/bin/aws ~/anaconda3/bin/aws1
 ls -l /usr/local/bin/aws
+rm -fr awscliv2.zip aws
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install

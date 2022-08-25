@@ -98,7 +98,7 @@ Parameters:
   CreateEKSAdminRole:
     Description: Whether to create the EKS Admin role, if not the first time to run this templdate, please choose FALSE
     Type: String
-    Default: "FALSE"
+    Default: "TRUE"
     AllowedValues:
       - "TRUE"
       - "FALSE"
@@ -108,9 +108,9 @@ Conditions:
   CreateC9SSMRole: !Equals
     - "TRUE"
     - !Ref C9CreateSSMRole
-  CreateContainerAdminRole: !Equals
+  CreateEKSAdminRole: !Equals
     - "TRUE"
-    - !Ref CreateContainerAdminRole
+    - !Ref CreateEKSAdminRole
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -132,7 +132,7 @@ Metadata:
           - C9AutoHibernateTimeout
           - C9DeployToPublicSubnet
           - C9CreateSSMRole          
-          - CreateContainerAdminRole
+          - CreateEKSAdminRole
 
 Resources:
   VPC:
@@ -617,7 +617,7 @@ Resources:
               - Effect: Allow
                 Action: '*'
                 Resource: '*'
-  ContainerAdminInstanceProfile:
+  EKSAdminInstanceProfile:
     Condition: CreateEKSAdminRole
     Type: 'AWS::IAM::InstanceProfile'
     Properties:
