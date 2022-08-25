@@ -39,5 +39,8 @@ echo "export EKS_POD_SUBNET_01=\"$CF_OUT_PodSubnet1\"" >> ~/.bashrc
 echo "export EKS_POD_SUBNET_02=\"$CF_OUT_PodSubnet2\"" >> ~/.bashrc
 echo "export EKS_POD_SUBNET_03=\"$CF_OUT_PodSubnet3\"" >> ~/.bashrc
 echo "export EKS_KEY_ARN=\"$CF_OUT_EKSKeyArn\"" >> ~/.bashrc
+echo "export EKS_ADMIN_ROLE=\"$CF_OUT_EKSAdminRole\"" >> ~/.bashrc
+
+
 
 source ~/.bashrc
