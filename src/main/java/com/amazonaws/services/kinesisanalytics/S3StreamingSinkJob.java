@@ -47,7 +47,7 @@ public class S3StreamingSinkJob {
                 .build();
         return sink;
     }
-
+     
     public static void main(String[] args) throws Exception {
         
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -63,18 +63,21 @@ public class S3StreamingSinkJob {
         
         DataStream<String> input = createSourceFromStaticConfig(env);
 
-        ObjectMapper jsonParser = new ObjectMapper();
+        input.addSink(createS3SinkFromStaticConfig());
 
-        input.map(value -> {
-            JsonNode jsonNode = jsonParser.readValue(value, JsonNode.class);
-            return new Tuple2<>(jsonNode.get("TICKER").asText(), jsonNode.get("PRICE").asDouble());
-        }).returns(Types.TUPLE(Types.STRING, Types.DOUBLE))
-                .keyBy(0) // Logically partition the stream per stock symbol
-                .timeWindow(Time.seconds(10), Time.seconds(5))  // Sliding window definition
-                .max(1) // Calculate mamximum price per stock over the window
-                .setParallelism(8) // Set parallelism for the min operator
-                .map(value -> value.f0 + "," + value.f1 + "," + value.f1.toString() + "\n")
-                .addSink(createS3SinkFromStaticConfig()).name("S3_sink");
+        // ObjectMapper jsonParser = new ObjectMapper();
+
+        // input.map(value -> {
+        //     JsonNode jsonNode = jsonParser.readValue(value, JsonNode.class);
+        //     return new Tuple2<>(jsonNode.get("TICKER").asText(), jsonNode.get("PRICE").asDouble());
+        // }).returns(Types.TUPLE(Types.STRING, Types.DOUBLE))
+        //         .keyBy(0) // Logically partition the stream per stock symbol
+        //         .timeWindow(Time.seconds(10), Time.seconds(5))  // Sliding window definition
+        //         .max(1) // Calculate mamximum price per stock over the window
+        //         .setParallelism(8) // Set parallelism for the min operator
+        //         .map(value -> value.f0 + "," + value.f1 + "," + value.f1.toString() + "\n")
+        //         .addSink(createS3SinkFromStaticConfig()).name("S3_sink");
+
         env.execute("Flink S3 Streaming Sink Job");
     }
 }
