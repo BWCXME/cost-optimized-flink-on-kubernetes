@@ -53,6 +53,8 @@ public class S3StreamingSinkJob {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         final ParameterTool params = ParameterTool.fromArgs(args);
         env.enableCheckpointing(10000); // Every 10 sec
+        env.disableOperatorChaining();
+
         checkpointDir = params.get("checkpoint-dir");
         region = params.get("region");
         s3SinkPath = params.get("s3SinkPath"); 
