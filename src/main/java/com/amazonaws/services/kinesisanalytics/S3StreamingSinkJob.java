@@ -20,13 +20,19 @@ import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.functions.sink.filesystem.bucketassigners.DateTimeBucketAssigner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 public class S3StreamingSinkJob {
     private static String region = null;
     private static String inputStreamName = null;
     private static String s3SinkPath = null;
     private static String checkpointDir = null;
+
+    private static final Logger log = LoggerFactory.getLogger(S3StreamingSinkJob.class);
     
     private static DataStream<String> createSourceFromStaticConfig(StreamExecutionEnvironment env) {
 
@@ -53,32 +59,34 @@ public class S3StreamingSinkJob {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         final ParameterTool params = ParameterTool.fromArgs(args);
         env.enableCheckpointing(10000); // Every 10 sec
-        env.disableOperatorChaining();
+        // env.disableOperatorChaining(); // For debug
 
         checkpointDir = params.get("checkpoint-dir");
         region = params.get("region");
         s3SinkPath = params.get("s3SinkPath"); 
         inputStreamName = params.get("inputStreamName"); 
+        
+		log.info("---Input Params---");
+		log.info("inputStreamName: {}, s3SinkPath: {}, region: {}, checkpointDir: {}", inputStreamName, s3SinkPath, region, checkpointDir);
+
         env.setStateBackend(new HashMapStateBackend());
         env.getCheckpointConfig().setCheckpointStorage(checkpointDir);
         env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime);
         
         DataStream<String> input = createSourceFromStaticConfig(env);
 
-        input.addSink(createS3SinkFromStaticConfig());
+        ObjectMapper jsonParser = new ObjectMapper();
 
-        // ObjectMapper jsonParser = new ObjectMapper();
-
-        // input.map(value -> {
-        //     JsonNode jsonNode = jsonParser.readValue(value, JsonNode.class);
-        //     return new Tuple2<>(jsonNode.get("TICKER").asText(), jsonNode.get("PRICE").asDouble());
-        // }).returns(Types.TUPLE(Types.STRING, Types.DOUBLE))
-        //         .keyBy(0) // Logically partition the stream per stock symbol
-        //         .timeWindow(Time.seconds(10), Time.seconds(5))  // Sliding window definition
-        //         .max(1) // Calculate mamximum price per stock over the window
-        //         .setParallelism(8) // Set parallelism for the min operator
-        //         .map(value -> value.f0 + "," + value.f1 + "," + value.f1.toString() + "\n")
-        //         .addSink(createS3SinkFromStaticConfig()).name("S3_sink");
+        input.map(value -> {
+            JsonNode jsonNode = jsonParser.readValue(value, JsonNode.class);
+            return new Tuple2<>(jsonNode.get("TICKER").asText(), jsonNode.get("PRICE").asDouble());
+        }).returns(Types.TUPLE(Types.STRING, Types.DOUBLE))
+                .keyBy(0) // Logically partition the stream per stock symbol
+                .timeWindow(Time.seconds(10), Time.seconds(5))  // Sliding window definition
+                .max(1) // Calculate mamximum price per stock over the window
+                .setParallelism(8) // Set parallelism for the min operator
+                .map(value -> value.f0 + "," + value.f1 + "," + value.f1.toString() + "\n")
+                .addSink(createS3SinkFromStaticConfig()).name("S3_sink");
 
         env.execute("Flink S3 Streaming Sink Job");
     }
