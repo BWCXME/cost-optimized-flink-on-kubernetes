@@ -375,6 +375,7 @@ EOF
 source ~/.bashrc
 flink -v
 
+
 echo "==============================================="
 echo "  Expand disk space ......"
 echo "==============================================="
@@ -396,6 +397,16 @@ mv buildx ~/.docker/cli-plugins/docker-buildx
 chmod a+x ~/.docker/cli-plugins/docker-buildx
 docker run --privileged --rm tonistiigi/binfmt --install all
 docker buildx ls
+
+
+echo "==============================================="
+echo "  Install kmf ......"
+echo "==============================================="
+git clone https://github.com/awslabs/aws-kubernetes-migration-factory
+cd aws-kubernetes-migration-factory/
+sudo go build -o /usr/local/bin/kmf
+cd ..
+kmf -h
 
 
 # 最后再执行一次 source
