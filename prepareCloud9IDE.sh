@@ -237,10 +237,11 @@ curl -s https://raw.githubusercontent.com/armosec/kubescape/master/install.sh | 
 echo "==============================================="
 echo "  Install ec2-instance-selector ......"
 echo "==============================================="
-curl -Lo ec2-instance-selector https://github.com/aws/amazon-ec2-instance-selector/releases/download/v2.3.3/ec2-instance-selector-`uname | tr '[:upper:]' '[:lower:]'`-amd64 && chmod +x ec2-instance-selector
+#curl -Lo ec2-instance-selector https://github.com/aws/amazon-ec2-instance-selector/releases/download/v2.3.3/ec2-instance-selector-`uname | tr '[:upper:]' '[:lower:]'`-amd64 && chmod +x ec2-instance-selector
+curl -Lo ec2-instance-selector https://github.com/aws/amazon-ec2-instance-selector/releases/download/v2.4.0/ec2-instance-selector-`uname | tr '[:upper:]' '[:lower:]'`-amd64 && chmod +x ec2-instance-selector
 chmod +x ./ec2-instance-selector
 mkdir -p $HOME/bin && mv ./ec2-instance-selector $HOME/bin/ec2-instance-selector
-
+# ec2-instance-selector -o interactive
 
 echo "==============================================="
 echo "  Install kind ......"
@@ -408,6 +409,24 @@ sudo go build -o /usr/local/bin/kmf
 cd ..
 kmf -h
 
+
+echo "==============================================="
+echo "  Install Kubectl EKS Plugin ......"
+echo "==============================================="
+git clone https://github.com/surajincloud/kubectl-eks.git
+cd kubectl-eks
+make
+sudo mv ./kubectl-eks /usr/local/bin
+cd ..
+# kubectl eks irsa
+# kubectl eks irsa -n kube-system
+# kubectl eks ssm <name-of-the-node>
+# kubectl eks nodes
+
+echo "==============================================="
+echo "  Install graphviz ......"
+echo "==============================================="
+sudo yum -y install graphviz
 
 # 最后再执行一次 source
 echo "source .bashrc"
