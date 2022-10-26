@@ -400,14 +400,15 @@ docker run --privileged --rm tonistiigi/binfmt --install all
 docker buildx ls
 
 
-echo "==============================================="
-echo "  Install kmf ......"
-echo "==============================================="
-git clone https://github.com/awslabs/aws-kubernetes-migration-factory
-cd aws-kubernetes-migration-factory/
-sudo go build -o /usr/local/bin/kmf
-cd ..
-kmf -h
+# 编译安装时间较久，如需要请手动复制脚本安装
+# echo "==============================================="
+# echo "  Install kmf ......"
+# echo "==============================================="
+# git clone https://github.com/awslabs/aws-kubernetes-migration-factory
+# cd aws-kubernetes-migration-factory/
+# sudo go build -o /usr/local/bin/kmf
+# cd ..
+# kmf -h
 
 
 echo "==============================================="
