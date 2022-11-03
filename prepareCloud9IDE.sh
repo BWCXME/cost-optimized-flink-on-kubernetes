@@ -78,7 +78,7 @@ aws --version
 echo "==============================================="
 echo "  Config Cloud9 ......"
 echo "==============================================="
-#aws cloud9 update-environment --environment-id $C9_PID --managed-credentials-action DISABLE
+aws cloud9 update-environment --environment-id $C9_PID --managed-credentials-action DISABLE
 rm -vf ${HOME}/.aws/credentials
 
 
@@ -259,6 +259,15 @@ flux --version
 
 
 echo "==============================================="
+echo "  Install argocd ......"
+echo "==============================================="
+curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+rm argocd-linux-amd64
+argocd version --client
+
+
+echo "==============================================="
 echo "  Install siege ......"
 echo "==============================================="
 sudo yum install siege -y
@@ -424,12 +433,35 @@ cd ..
 # kubectl eks ssm <name-of-the-node>
 # kubectl eks nodes
 
+
 echo "==============================================="
 echo "  Install graphviz ......"
 echo "==============================================="
 sudo yum -y install graphviz
 
+
+echo "==============================================="
+echo "  Install clusterctl ......"
+echo "==============================================="
+curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.2.4/clusterctl-linux-amd64 -o clusterctl
+chmod +x ./clusterctl
+sudo mv ./clusterctl /usr/local/bin/clusterctl
+clusterctl version
+
+
+echo "==============================================="
+echo "  Install clusterawsadm ......"
+echo "==============================================="
+curl -L https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/download/v1.5.0/clusterawsadm-linux-amd64 -o clusterawsadm
+chmod +x clusterawsadm
+sudo mv clusterawsadm /usr/local/bin
+clusterawsadm version
+
+
+
 # 最后再执行一次 source
 echo "source .bashrc"
 shopt -s expand_aliases
 source ~/.bashrc
+
+
