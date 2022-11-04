@@ -1,6 +1,7 @@
 #!/bin/bash
 
-STABLE_COMMIT_HASH="3dd2ef7d59ff91800fc82be1f0f04b01db9080bf"
+# STABLE_COMMIT_HASH="3dd2ef7d59ff91800fc82be1f0f04b01db9080bf"
+# git checkout -b custom-1.13 3dd2ef7d59ff91800fc82be1f0f04b01db9080bf
 
 FLINK_VERSION="1.13"
 JAVA_VERSION="8"
@@ -77,12 +78,16 @@ then
     git fetch origin
 else
     echo "Downloading Dockerfiles from official apache/flink-docker git repository..."
-    git clone https://github.com/apache/flink-docker.git
+    # git clone https://github.com/apache/flink-docker.git
+    git clone https://github.com/DATACNTOP/flink-docker.git
     cd "flink-docker"
 fi
 
-echo "Checkout to commit: $STABLE_COMMIT_HASH"
-git checkout $STABLE_COMMIT_HASH -q
+# echo "Checkout to commit: $STABLE_COMMIT_HASH"
+# git checkout $STABLE_COMMIT_HASH -q
+
+echo "Checkout to brunch: custom-1.13"
+git checkout -b custom-1.13 -q
 
 IMG=$FLINK_VERSION-scala_$SCALA_VERSION-java$JAVA_VERSION
 DIR_STR="$FLINK_VERSION/scala_$SCALA_VERSION-java$JAVA_VERSION-debian"
