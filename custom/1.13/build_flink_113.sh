@@ -80,6 +80,7 @@ else
     echo "Downloading Dockerfiles from official apache/flink-docker git repository..."
     # git clone https://github.com/apache/flink-docker.git
     git clone https://github.com/DATACNTOP/flink-docker.git
+    # git clone -b custom-1.13 https://github.com/DATACNTOP/flink-docker.git
     cd "flink-docker"
 fi
 
@@ -87,7 +88,7 @@ fi
 # git checkout $STABLE_COMMIT_HASH -q
 
 echo "Checkout to brunch: custom-1.13"
-git checkout -b custom-1.13 -q
+git checkout custom-1.13 -q
 
 IMG=$FLINK_VERSION-scala_$SCALA_VERSION-java$JAVA_VERSION
 DIR_STR="$FLINK_VERSION/scala_$SCALA_VERSION-java$JAVA_VERSION-debian"
