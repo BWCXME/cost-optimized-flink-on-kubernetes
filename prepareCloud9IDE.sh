@@ -420,18 +420,18 @@ docker buildx ls
 # kmf -h
 
 
-echo "==============================================="
-echo "  Install Kubectl EKS Plugin ......"
-echo "==============================================="
-git clone https://github.com/surajincloud/kubectl-eks.git
-cd kubectl-eks
-make
-sudo mv ./kubectl-eks /usr/local/bin
-cd ..
-# kubectl eks irsa
-# kubectl eks irsa -n kube-system
-# kubectl eks ssm <name-of-the-node>
-# kubectl eks nodes
+# echo "==============================================="
+# echo "  Install Kubectl EKS Plugin ......"
+# echo "==============================================="
+# git clone https://github.com/surajincloud/kubectl-eks.git
+# cd kubectl-eks
+# make
+# sudo mv ./kubectl-eks /usr/local/bin
+# cd ..
+# # kubectl eks irsa
+# # kubectl eks irsa -n kube-system
+# # kubectl eks ssm <name-of-the-node>
+# # kubectl eks nodes
 
 
 echo "==============================================="
