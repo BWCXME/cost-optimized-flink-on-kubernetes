@@ -30,13 +30,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-streaming-java</artifactId>
-            <version>${flink.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
           <groupId>org.apache.flink</groupId>
           <artifactId>flink-s3-fs-hadoop</artifactId>
           <version>${flink.version}</version>
@@ -49,7 +42,15 @@
         </dependency>        
 
         <!-- Kinesis 1.15.x -->
-        <!-- <dependency>
+        <!-- 
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-java</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kinesis</artifactId>
             <version>${flink.version}</version>
@@ -59,7 +60,8 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kinesis</artifactId>
             <version>${flink.version}</version>
-        </dependency> -->
+        </dependency>
+        -->
 
         <!-- Kinesis 1.13.x -->        
         <dependency>
