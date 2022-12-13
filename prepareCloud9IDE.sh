@@ -458,6 +458,11 @@ sudo mv clusterawsadm /usr/local/bin
 clusterawsadm version
 
 
+echo "==============================================="
+echo "  Install lynx ......"
+echo "==============================================="
+sudo yum install lynx -y
+
 
 # 最后再执行一次 source
 echo "source .bashrc"
