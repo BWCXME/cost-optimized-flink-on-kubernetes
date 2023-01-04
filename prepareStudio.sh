@@ -1,6 +1,3 @@
-# 参考
-# https://github.com/fmmasood/eks-cli-init-tools/blob/main/cli_tools.sh
-
 echo "==============================================="
 echo "  Config envs ......"
 echo "==============================================="
@@ -20,6 +17,14 @@ aws configure set region $AWS_REGION
 source ~/.bashrc
 aws sts get-caller-identity
 
+# 辅助工具
+echo "==============================================="
+echo "  Install jq, envsubst (from GNU gettext utilities) and bash-completion ......"
+echo "==============================================="
+# moreutils: The command sponge allows us to read and write to the same file (cat a.txt|sponge a.txt)
+sudo amazon-linux-extras install epel -y
+sudo yum -y install bash-completion jq gettext moreutils
+
 
 echo "==============================================="
 echo "  Install eksctl ......"
@@ -36,25 +41,6 @@ EOF
 source ~/.bashrc
 
 
-echo "==============================================="
-echo "  Install eks anywhere ......"
-echo "==============================================="
-export EKSA_RELEASE="0.10.1" OS="$(uname -s | tr A-Z a-z)" RELEASE_NUMBER=15
-curl "https://anywhere-assets.eks.amazonaws.com/releases/eks-a/${RELEASE_NUMBER}/artifacts/eks-a/v${EKSA_RELEASE}/${OS}/amd64/eksctl-anywhere-v${EKSA_RELEASE}-${OS}-amd64.tar.gz" \
-    --silent --location \
-    | tar xz ./eksctl-anywhere
-sudo mv ./eksctl-anywhere /usr/local/bin/
-eksctl anywhere version
-
-
-# 辅助工具
-echo "==============================================="
-echo "  Install jq, envsubst (from GNU gettext utilities) and bash-completion ......"
-echo "==============================================="
-# moreutils: The command sponge allows us to read and write to the same file (cat a.txt|sponge a.txt)
-sudo yum -y install jq gettext bash-completion moreutils
-
-
 # 更新 awscli 并配置自动完成
 echo "==============================================="
 echo "  Upgrade awscli to v2 ......"
@@ -66,20 +52,15 @@ rm -fr awscliv2.zip aws
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
-which aws_completer
+AWS_COMPLETER=$(which aws_completer)
 echo $SHELL
 cat >> ~/.bashrc <<EOF
-complete -C '/usr/local/bin/aws_completer' aws
+alias a=aws
+complete -C '${AWS_COMPLETER}' aws
+complete -C '${AWS_COMPLETER}' a
 EOF
 source ~/.bashrc
 aws --version
-
-
-echo "==============================================="
-echo "  Config Cloud9 ......"
-echo "==============================================="
-aws cloud9 update-environment --environment-id $C9_PID --managed-credentials-action DISABLE
-rm -vf ${HOME}/.aws/credentials
 
 
 echo "==============================================="
@@ -173,12 +154,6 @@ echo 'yq() {
 }' | tee -a ~/.bashrc && source ~/.bashrc
 
 
-echo "==============================================="
-echo "  Install c9 to open files in cloud9 ......"
-echo "==============================================="
-npm install -g c9
-# example  c9 open ~/package.json
-
 
 echo "==============================================="
 echo "  Install k9s a Kubernetes CLI To Manage Your Clusters In Style ......"
@@ -203,32 +178,6 @@ sh -c "$(curl -sSL https://git.io/install-kubent)"
 
 
 echo "==============================================="
-echo "  Install IAM Authenticator ......"
-echo "==============================================="
-## https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html
-## curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
-## curl -o aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.9/aws-iam-authenticator_0.5.9_linux_amd64
-# curl -o aws-iam-authenticator https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
-# chmod +x ./aws-iam-authenticator
-# mkdir -p $HOME/bin && mv ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
-# echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
-# source ~/.bashrc
-# aws-iam-authenticator help
-
-
-echo "==============================================="
-echo "  Install Maven ......"
-echo "==============================================="
-wget https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
-sudo tar xzvf apache-maven-3.8.6-bin.tar.gz -C /opt
-cat >> ~/.bashrc <<EOF
-export PATH="/opt/apache-maven-3.8.6/bin:$PATH"
-EOF
-source ~/.bashrc
-mvn --version
-
-
-echo "==============================================="
 echo "  Install kubescape ......"
 echo "==============================================="
 curl -s https://raw.githubusercontent.com/armosec/kubescape/master/install.sh | /bin/bash
@@ -237,11 +186,10 @@ curl -s https://raw.githubusercontent.com/armosec/kubescape/master/install.sh | 
 echo "==============================================="
 echo "  Install ec2-instance-selector ......"
 echo "==============================================="
-#curl -Lo ec2-instance-selector https://github.com/aws/amazon-ec2-instance-selector/releases/download/v2.3.3/ec2-instance-selector-`uname | tr '[:upper:]' '[:lower:]'`-amd64 && chmod +x ec2-instance-selector
-curl -Lo ec2-instance-selector https://github.com/aws/amazon-ec2-instance-selector/releases/download/v2.4.0/ec2-instance-selector-`uname | tr '[:upper:]' '[:lower:]'`-amd64 && chmod +x ec2-instance-selector
+curl -Lo ec2-instance-selector https://github.com/aws/amazon-ec2-instance-selector/releases/download/v2.3.3/ec2-instance-selector-`uname | tr '[:upper:]' '[:lower:]'`-amd64 && chmod +x ec2-instance-selector
 chmod +x ./ec2-instance-selector
 mkdir -p $HOME/bin && mv ./ec2-instance-selector $HOME/bin/ec2-instance-selector
-# ec2-instance-selector -o interactive
+
 
 echo "==============================================="
 echo "  Install kind ......"
@@ -256,15 +204,6 @@ echo "  Install Flux CLI ......"
 echo "==============================================="
 curl -s https://fluxcd.io/install.sh | sudo bash
 flux --version
-
-
-echo "==============================================="
-echo "  Install argocd ......"
-echo "==============================================="
-curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-rm argocd-linux-amd64
-argocd version --client
 
 
 echo "==============================================="
@@ -284,18 +223,10 @@ sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinu
 sudo yum install terraform -y
 terraform --version
 
-
 echo "==============================================="
-echo "  More Aliases ......"
+echo "  Install Go ......"
 echo "==============================================="
-cat >> ~/.bashrc <<EOF
-alias c=clear
-EOF
-source ~/.bashrc
-
-echo "==============================================="
-echo "  Config Go ......"
-echo "==============================================="
+sudo yum install golang -y
 go version
 export GOPATH=$(go env GOPATH)
 echo 'export GOPATH='${GOPATH} >> ~/.bashrc
@@ -387,81 +318,22 @@ flink -v
 
 
 echo "==============================================="
-echo "  Expand disk space ......"
+echo "  Install sam cli ......"
 echo "==============================================="
-wget https://raw.githubusercontent.com/BWCXME/cost-optimized-flink-on-kubernetes/main/resize-ebs.sh
-chmod +x resize-ebs.sh
-./resize-ebs.sh 1000
-
-
-echo "==============================================="
-echo "  Install docker buildx ......"
-echo "==============================================="
-# https://aws.amazon.com/blogs/compute/how-to-quickly-setup-an-experimental-environment-to-run-containers-on-x86-and-aws-graviton2-based-amazon-ec2-instances-effort-to-port-a-container-based-application-from-x86-to-graviton2/
-# https://docs.docker.com/build/buildx/install/
-# export DOCKER_BUILDKIT=1
-# docker build --platform=local -o . git://github.com/docker/buildx
-DOCKER_BUILDKIT=1 docker build --platform=local -o . "https://github.com/docker/buildx.git"
-mkdir -p ~/.docker/cli-plugins
-mv buildx ~/.docker/cli-plugins/docker-buildx
-chmod a+x ~/.docker/cli-plugins/docker-buildx
-docker run --privileged --rm tonistiigi/binfmt --install all
-docker buildx ls
-
-
-# 编译安装时间较久，如需要请手动复制脚本安装
-# echo "==============================================="
-# echo "  Install kmf ......"
-# echo "==============================================="
-# git clone https://github.com/awslabs/aws-kubernetes-migration-factory
-# cd aws-kubernetes-migration-factory/
-# sudo go build -o /usr/local/bin/kmf
-# cd ..
-# kmf -h
-
-
-# echo "==============================================="
-# echo "  Install Kubectl EKS Plugin ......"
-# echo "==============================================="
-# git clone https://github.com/surajincloud/kubectl-eks.git
-# cd kubectl-eks
-# make
-# sudo mv ./kubectl-eks /usr/local/bin
-# cd ..
-# # kubectl eks irsa
-# # kubectl eks irsa -n kube-system
-# # kubectl eks ssm <name-of-the-node>
-# # kubectl eks nodes
+wget https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip
+unzip aws-sam-cli-linux-x86_64.zip -d sam-installation
+sudo ./sam-installation/install
+sam --version
 
 
 echo "==============================================="
-echo "  Install graphviz ......"
+echo "  Set Aliases ......"
 echo "==============================================="
-sudo yum -y install graphviz
+echo "alias c='clear'" | tee -a ~/.bashrc
+echo "alias b='/bin/bash'" | tee -a ~/.bashrc
+echo "alias cds='cd /home/notebook/work'" | tee -a ~/.bashrc
 
-
-echo "==============================================="
-echo "  Install clusterctl ......"
-echo "==============================================="
-curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/v1.2.4/clusterctl-linux-amd64 -o clusterctl
-chmod +x ./clusterctl
-sudo mv ./clusterctl /usr/local/bin/clusterctl
-clusterctl version
-
-
-echo "==============================================="
-echo "  Install clusterawsadm ......"
-echo "==============================================="
-curl -L https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/download/v1.5.0/clusterawsadm-linux-amd64 -o clusterawsadm
-chmod +x clusterawsadm
-sudo mv clusterawsadm /usr/local/bin
-clusterawsadm version
-
-
-echo "==============================================="
-echo "  Install lynx ......"
-echo "==============================================="
-sudo yum install lynx -y
+source ~/.bashrc
 
 
 echo "==============================================="
@@ -478,5 +350,3 @@ emr-on-eks-custom-image --version
 echo "source .bashrc"
 shopt -s expand_aliases
 source ~/.bashrc
-
-

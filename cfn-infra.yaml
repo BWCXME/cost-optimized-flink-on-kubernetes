@@ -312,6 +312,8 @@ Resources:
         Value: !Sub "${NamePrefix}-PublicSubnet01"
       - Key: kubernetes.io/role/elb
         Value: 1
+      - Key: for-use-with-amazon-emr-managed-policies
+        Value: true
 
   PublicSubnet02:
     Type: AWS::EC2::Subnet
@@ -333,6 +335,8 @@ Resources:
         Value: !Sub "${NamePrefix}-PublicSubnet02"
       - Key: kubernetes.io/role/elb
         Value: 1
+      - Key: for-use-with-amazon-emr-managed-policies
+        Value: true
 
   PublicSubnet03:
     Type: AWS::EC2::Subnet
@@ -354,6 +358,8 @@ Resources:
         Value: !Sub "${NamePrefix}-PublicSubnet03"
       - Key: kubernetes.io/role/elb
         Value: 1
+      - Key: for-use-with-amazon-emr-managed-policies
+        Value: true
 
   PrivateSubnet01:
     Type: AWS::EC2::Subnet
@@ -374,6 +380,8 @@ Resources:
         Value: !Sub "${NamePrefix}-PrivateSubnet01"
       - Key: kubernetes.io/role/internal-elb
         Value: 1
+      - Key: for-use-with-amazon-emr-managed-policies
+        Value: true
 
   PrivateSubnet02:
     Type: AWS::EC2::Subnet
@@ -394,6 +402,8 @@ Resources:
         Value: !Sub "${NamePrefix}-PrivateSubnet02"
       - Key: kubernetes.io/role/internal-elb
         Value: 1
+      - Key: for-use-with-amazon-emr-managed-policies
+        Value: true
 
   PrivateSubnet03:
     Type: AWS::EC2::Subnet
@@ -414,6 +424,8 @@ Resources:
         Value: !Sub "${NamePrefix}-PrivateSubnet03"
       - Key: kubernetes.io/role/internal-elb
         Value: 1
+      - Key: for-use-with-amazon-emr-managed-policies
+        Value: true
 
   PublicSubnet01RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -482,6 +494,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub "${NamePrefix}-shared-node"
+        - Key: for-use-with-amazon-emr-managed-policies
+          Value: true
 
   SharedNodeSecurityGroupIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
