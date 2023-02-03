@@ -19,6 +19,7 @@ import org.apache.flink.util.Collector;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.functions.sink.filesystem.bucketassigners.DateTimeBucketAssigner;
+import org.apache.flink.contrib.streaming.state.EmbeddedRocksDBStateBackend;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +70,12 @@ public class S3StreamingSinkJob {
 		log.info("---Input Params---");
 		log.info("inputStreamName: {}, s3SinkPath: {}, region: {}, checkpointDir: {}", inputStreamName, s3SinkPath, region, checkpointDir);
 
+        // https://nightlies.apache.org/flink/flink-docs-stable/docs/ops/state/state_backends/#migrating-from-legacy-backends
         // env.setStateBackend(new HashMapStateBackend());
-        env.setStateBackend(new RocksDBStateBackend());
+        env.setStateBackend(new EmbeddedRocksDBStateBackend());
+        env.getCheckpointConfig().setCheckpointStorage("file:///tmp");
+        
+
         env.getCheckpointConfig().setCheckpointStorage(checkpointDir);
         env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime);
         
