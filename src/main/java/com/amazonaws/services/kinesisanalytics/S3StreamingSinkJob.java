@@ -69,7 +69,8 @@ public class S3StreamingSinkJob {
 		log.info("---Input Params---");
 		log.info("inputStreamName: {}, s3SinkPath: {}, region: {}, checkpointDir: {}", inputStreamName, s3SinkPath, region, checkpointDir);
 
-        env.setStateBackend(new HashMapStateBackend());
+        // env.setStateBackend(new HashMapStateBackend());
+        env.setStateBackend(new RocksDBStateBackend());
         env.getCheckpointConfig().setCheckpointStorage(checkpointDir);
         env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime);
         
