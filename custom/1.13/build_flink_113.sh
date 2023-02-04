@@ -75,7 +75,8 @@ if [ -d "flink-docker" ]
 then
     echo "Detected existing apache/flink-docker git repository. Fetching updates ..."
     cd "flink-docker"
-    git fetch origin
+    # git fetch origin
+    git pull
 else
     echo "Downloading Dockerfiles from official apache/flink-docker git repository..."
     # git clone https://github.com/apache/flink-docker.git

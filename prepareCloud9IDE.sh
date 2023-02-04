@@ -376,11 +376,11 @@ source ~/.bashrc
 echo "==============================================="
 echo "  Install flink ......"
 echo "==============================================="
-wget https://dlcdn.apache.org/flink/flink-1.15.2/flink-1.15.2-bin-scala_2.12.tgz
+wget https://archive.apache.org/dist/flink/flink-1.15.3/flink-1.15.3-bin-scala_2.12.tgz
 sudo tar xzvf flink-*.tgz -C /opt
-sudo chown -R ec2-user /opt/flink-1.15.2 
+sudo chown -R ec2-user /opt/flink-1.15.3
 cat >> ~/.bashrc <<EOF
-export PATH="/opt/flink-1.15.2/bin:$PATH"
+export PATH="/opt/flink-1.15.3/bin:$PATH"
 EOF
 source ~/.bashrc
 flink -v
