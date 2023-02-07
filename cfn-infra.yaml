@@ -9,6 +9,11 @@ Parameters:
     Default: 10.0.0.0/16
     Description: The CIDR range for the VPC. This should be a valid private (RFC 1918) CIDR range.
 
+  VpcSecondaryBlock:
+    Type: String
+    Default: 100.255.0.0/16
+    Description: The secondary CIDR range for Pods.
+
   PublicSubnet01Block:
     Type: String
     Default: 10.0.0.0/20
@@ -38,6 +43,21 @@ Parameters:
     Type: String
     Default: 10.0.160.0/20
     Description: CidrBlock for private subnet 03 within the VPC
+
+  PodSubnet01Block:
+    Type: String
+    Default: 100.255.0.0/18
+    Description: CidrBlock for pod subnet 01 within the VPC
+
+  PodSubnet02Block:
+    Type: String
+    Default: 100.255.64.0/18
+    Description: CidrBlock for pod subnet 02 within the VPC
+
+  PodSubnet03Block:
+    Type: String
+    Default: 100.255.128.0/18
+    Description: CidrBlock for pod subnet 03 within the VPC
 
   NamePrefix:
     Type: String
@@ -119,14 +139,18 @@ Metadata:
         Label:
           default: "Worker Network Configuration"
         Parameters:
+          - NamePrefix
           - VpcBlock
+          - VpcSecondaryBlock
           - PublicSubnet01Block
           - PublicSubnet02Block
           - PublicSubnet03Block
           - PrivateSubnet01Block
           - PrivateSubnet02Block
           - PrivateSubnet03Block
-          - NamePrefix
+          - PodSubnet01Block
+          - PodSubnet02Block
+          - PodSubnet03Block          
           - C9EC2InstanceType
           - C9Image
           - C9AutoHibernateTimeout
@@ -145,6 +169,12 @@ Resources:
       - Key: Name
         Value: !Sub '${NamePrefix}-VPC'
 
+  VpcSecondaryCidrBlock:
+    Type: AWS::EC2::VPCCidrBlock
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref VpcSecondaryBlock
+
   InternetGateway:
     Type: "AWS::EC2::InternetGateway"
 
@@ -160,7 +190,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
       - Key: Name
-        Value: Public Subnets
+        Value: public-rtb
       - Key: Network
         Value: Public
 
@@ -170,7 +200,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
       - Key: Name
-        Value: Private Subnet AZ1
+        Value: private-rtb-01
       - Key: Network
         Value: Private01
 
@@ -180,7 +210,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
       - Key: Name
-        Value: Private Subnet AZ2
+        Value: private-rtb-02
       - Key: Network
         Value: Private02
 
@@ -190,9 +220,39 @@ Resources:
       VpcId: !Ref VPC
       Tags:
       - Key: Name
-        Value: Private Subnet AZ3
+        Value: private-rtb-03
       - Key: Network
         Value: Private03
+
+  PodRouteTable01:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: pod-rtb-01
+      - Key: Network
+        Value: Pod01
+
+  PodRouteTable02:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: pod-rtb-02
+      - Key: Network
+        Value: Pod02
+
+  PodRouteTable03:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: pod-rtb-03
+      - Key: Network
+        Value: Pod03
 
   PublicRoute:
     DependsOn: VPCGatewayAttachment
@@ -427,6 +487,60 @@ Resources:
       - Key: for-use-with-amazon-emr-managed-policies
         Value: true
 
+  PodSubnet01:
+    Type: AWS::EC2::Subnet
+    Metadata:
+      Comment: Pod Subnet 01
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - '0'
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Ref: PodSubnet01Block
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: !Sub "${NamePrefix}-PodSubnet01"
+
+  PodSubnet02:
+    Type: AWS::EC2::Subnet
+    Metadata:
+      Comment: Pod Subnet 02
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - '1'
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Ref: PodSubnet02Block
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: !Sub "${NamePrefix}-PodSubnet02"
+
+  PodSubnet03:
+    Type: AWS::EC2::Subnet
+    Metadata:
+      Comment: Pod Subnet 03
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - '2'
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Ref: PodSubnet03Block
+      VpcId:
+        Ref: VPC
+      Tags:
+      - Key: Name
+        Value: !Sub "${NamePrefix}-PodSubnet03"
+
   PublicSubnet01RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -463,6 +577,24 @@ Resources:
       SubnetId: !Ref PrivateSubnet03
       RouteTableId: !Ref PrivateRouteTable03
 
+  PodSubnet01RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PodSubnet01
+      RouteTableId: !Ref PodRouteTable01
+
+  PodSubnet02RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PodSubnet02
+      RouteTableId: !Ref PodRouteTable02
+
+  PodSubnet03RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PodSubnet03
+      RouteTableId: !Ref PodRouteTable03
+
   ControlPlaneSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -475,7 +607,7 @@ Resources:
   ControlPlaneSecurityGroupIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-        GroupId: !Ref SharedNodeSecurityGroup
+        GroupId: !Ref ControlPlaneSecurityGroup
         IpProtocol: -1
         FromPort: -1
         ToPort: -1
@@ -601,6 +733,15 @@ Resources:
         FromPort: -1
         ToPort: -1
         SourceSecurityGroupId: !GetAtt SharedNodeSecurityGroup.GroupId
+
+  SharedNode2ControlPlaneIngress:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+        GroupId: !Ref SharedNodeSecurityGroup
+        IpProtocol: -1
+        FromPort: -1
+        ToPort: -1
+        SourceSecurityGroupId: !GetAtt ControlPlaneSecurityGroup.GroupId
 
   External2StudioIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
@@ -794,6 +935,18 @@ Outputs:
   PrivateSubnet3:
     Description: A reference to the private subnet in the 3rd Availability Zone
     Value: !Ref PrivateSubnet03
+
+  PodSubnet1:
+    Description: A reference to the pod subnet in the 1st Availability Zone
+    Value: !Ref PodSubnet01
+
+  PodSubnet2:
+    Description: A reference to the pod subnet in the 2nd Availability Zone
+    Value: !Ref PodSubnet02
+
+  PodSubnet3:
+    Description: A reference to the pod subnet in the 3rd Availability Zone
+    Value: !Ref PodSubnet03
 
   EKSAdminRole:
     Description: Management role for EKS
