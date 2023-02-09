@@ -685,7 +685,7 @@ Resources:
   StudioSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Security Group for EMR Studio Engine
+      GroupDescription: Security Group for EMR Studio Cluster/endpoint
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: -1
@@ -694,7 +694,7 @@ Resources:
           CidrIp: !Ref VpcBlock          
       Tags:
         - Key: Name
-          Value: !Sub "${NamePrefix}-emr-studio-engine"
+          Value: !Sub "${NamePrefix}-emr-studio-endpoint"
         - Key: for-use-with-amazon-emr-managed-policies
           Value: true
 

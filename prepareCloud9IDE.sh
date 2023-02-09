@@ -282,6 +282,11 @@ echo "==============================================="
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 sudo yum install terraform -y
+echo "alias tf='terraform'" >> ~/.bashrc
+echo "alias tfi='terraform init'" >> ~/.bashrc
+echo "alias tfp='terraform plan -out tfplan'" >> ~/.bashrc
+echo "alias tfa='terraform apply'" >> ~/.bashrc # terraform apply tfplan
+source ~/.bashrc
 terraform --version
 
 
