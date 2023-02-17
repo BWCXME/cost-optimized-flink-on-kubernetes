@@ -437,9 +437,11 @@ Resources:
         Ref: VPC
       Tags:
       - Key: Name
-        Value: !Sub "${NamePrefix}-PrivateSubnet01"
+        Value: !Sub "${NamePrefix}-PrivateSubnet01"  
       - Key: kubernetes.io/role/internal-elb
         Value: 1
+      - Key: karpenter.sh/discovery # Tags subnets for Karpenter auto-discovery
+        Value: true    
       - Key: for-use-with-amazon-emr-managed-policies
         Value: true
 
@@ -462,6 +464,8 @@ Resources:
         Value: !Sub "${NamePrefix}-PrivateSubnet02"
       - Key: kubernetes.io/role/internal-elb
         Value: 1
+      - Key: karpenter.sh/discovery # Tags subnets for Karpenter auto-discovery
+        Value: true        
       - Key: for-use-with-amazon-emr-managed-policies
         Value: true
 
@@ -484,6 +488,8 @@ Resources:
         Value: !Sub "${NamePrefix}-PrivateSubnet03"
       - Key: kubernetes.io/role/internal-elb
         Value: 1
+      - Key: karpenter.sh/discovery # Tags subnets for Karpenter auto-discovery
+        Value: true        
       - Key: for-use-with-amazon-emr-managed-policies
         Value: true
 
@@ -682,7 +688,7 @@ Resources:
         - Key: for-use-with-amazon-emr-managed-policies
           Value: true
 
-  StudioSecurityGroup:
+  EndpointSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for EMR Studio Cluster/endpoint
@@ -698,37 +704,37 @@ Resources:
         - Key: for-use-with-amazon-emr-managed-policies
           Value: true
 
-  StudioSecurityGroupIngress:
+  EndpointSecurityGroupIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-        GroupId: !Ref StudioSecurityGroup
+        GroupId: !Ref EndpointSecurityGroup
         IpProtocol: -1
         FromPort: -1
         ToPort: -1
-        SourceSecurityGroupId: !GetAtt StudioSecurityGroup.GroupId
+        SourceSecurityGroupId: !GetAtt EndpointSecurityGroup.GroupId
 
-  Workspace2StudioIngress:
+  Workspace2EndpointIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-        GroupId: !Ref StudioSecurityGroup
+        GroupId: !Ref EndpointSecurityGroup
         IpProtocol: "tcp"
         FromPort: 18888
         ToPort: 18888
         SourceSecurityGroupId: !GetAtt WorkspaceSecurityGroup.GroupId
 
-  ControlPlane2StudioIngress:
+  ControlPlane2EndpointIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-        GroupId: !Ref StudioSecurityGroup
+        GroupId: !Ref EndpointSecurityGroup
         IpProtocol: -1
         FromPort: -1
         ToPort: -1
         SourceSecurityGroupId: !GetAtt ControlPlaneSecurityGroup.GroupId
 
-  SharedNode2StudioIngress:
+  SharedNode2EndpointIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-        GroupId: !Ref StudioSecurityGroup
+        GroupId: !Ref EndpointSecurityGroup
         IpProtocol: -1
         FromPort: -1
         ToPort: -1
@@ -743,41 +749,41 @@ Resources:
         ToPort: -1
         SourceSecurityGroupId: !GetAtt ControlPlaneSecurityGroup.GroupId
 
-  External2StudioIngress:
+  External2EndpointIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
-        GroupId: !Ref StudioSecurityGroup
+        GroupId: !Ref EndpointSecurityGroup
         IpProtocol: -1
         FromPort: -1
         ToPort: -1
         SourceSecurityGroupId: !GetAtt ExternalSecurityGroup.GroupId
 
-  Studio2ControlPlaneIngress:
+  Endpoint2ControlPlaneIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
         GroupId: !Ref ControlPlaneSecurityGroup
         IpProtocol: -1
         FromPort: -1
         ToPort: -1
-        SourceSecurityGroupId: !GetAtt StudioSecurityGroup.GroupId
+        SourceSecurityGroupId: !GetAtt EndpointSecurityGroup.GroupId
 
-  Studio2SharedNodeIngress:
+  Endpoint2SharedNodeIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
         GroupId: !Ref SharedNodeSecurityGroup
         IpProtocol: -1
         FromPort: -1
         ToPort: -1
-        SourceSecurityGroupId: !GetAtt StudioSecurityGroup.GroupId
+        SourceSecurityGroupId: !GetAtt EndpointSecurityGroup.GroupId
 
-  Studio2ExternalIngress:
+  Endpoint2ExternalIngress:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
         GroupId: !Ref ExternalSecurityGroup
         IpProtocol: -1
         FromPort: -1
         ToPort: -1
-        SourceSecurityGroupId: !GetAtt StudioSecurityGroup.GroupId
+        SourceSecurityGroupId: !GetAtt EndpointSecurityGroup.GroupId
 
   # KMS EKS encryption key
   EKSKey:
